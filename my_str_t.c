@@ -17,10 +17,10 @@ typedef struct
 
 int my_str_create(my_str_t* str, size_t buf_size)
 {
-    (*str).size_m = buf_size + 1;
-    (*str).capacity_m = 2 * buf_size;
-    int allocation_size = sizeof(char*) * (*str).capacity_m;
-    if( !((*str).data = (char*) malloc(allocation_size)) )
+    str->capacity_m = buf_size;
+    int allocation_size = sizeof(char*) * str->capacity_m;
+    str->data = (char*) malloc(allocation_size);
+    if (!str->data)
     {
         return -1;
     }
@@ -51,9 +51,9 @@ int my_str_from_cstr(my_str_t* str, const char* cstr, size_t buf_size)
 
 void my_str_free(my_str_t* str)
 {   
-    (*str).capacity_m = 0;
-    (*str).size_m = 0;
-    free((*str).data);
+    str->capacity_m = 0;
+    str->size_m = 0;
+    free(str->data);
 }
 
 
