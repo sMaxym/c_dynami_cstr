@@ -18,6 +18,7 @@ typedef struct
 int my_str_create(my_str_t* str, size_t buf_size)
 {
     str->capacity_m = buf_size;
+    str->size_m = 0;
     int allocation_size = sizeof(char*) * str->capacity_m;
     str->data = (char*) malloc(allocation_size);
     if (!str->data)
@@ -27,25 +28,27 @@ int my_str_create(my_str_t* str, size_t buf_size)
     return 0;
 }
 
+
+// todo: remake normally
 int my_str_from_cstr(my_str_t* str, const char* cstr, size_t buf_size)
 {
-    size_t cstr_len = (size_t) strlen(cstr);
+    size_t cstr_size = strlen(cstr);
     if (!buf_size)
     {
-        buf_size = cstr_len;
+        buf_size = cstr_size;
     }
-    if (buf_size < cstr_len)
+    if (buf_size < cstr_size)
     {
         return -1;
     }
-    (*str).size_m = buf_size + 1;
-    (*str).capacity_m = 2 * buf_size;
-    int allocation_size = sizeof(char*) * (*str).capacity_m;
-    if ( !((*str).data = (char*) malloc(allocation_size)) )
+
+    my_str_create(str, buf_size);
+    memcpy(str->data, cstr, cstr_size);
+    str->size_m = cstr_size;
+    if (!str->data)
     {
         return -2;
     }
-    memcpy((*str).data, cstr, cstr_len);
     return 0;
 }
 
