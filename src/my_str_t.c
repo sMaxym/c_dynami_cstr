@@ -19,7 +19,7 @@ int my_str_create(my_str_t* str, size_t buf_size)
 {
     str->capacity_m = buf_size;
     str->size_m = 0;
-    int allocation_size = sizeof(char*) * str->capacity_m;
+    int allocation_size = sizeof(char*) * str->capacity_m + 1;
     str->data = (char*) malloc(allocation_size);
     if (!str->data)
     {
@@ -91,7 +91,15 @@ int my_str_empty(const my_str_t* str);
 //! Повертає символ у вказаній позиції, або -1, якщо вихід за межі стрічки,
 //! включаючи переданий нульовий вказівник.
 //! Тому, власне, int а не char
-int my_str_getc(const my_str_t* str, size_t index);
+int my_str_getc(const my_str_t* str, size_t index)
+{
+    if (index >= str->size_m || index < 0 || !str) 
+    {
+        return -1;
+    }
+
+    return (int) *(str->data + index);
+}
 
 //! Записує символ у вказану позиції (заміняючи той, що там був),
 //! Повертає 0, якщо позиція в межах стрічки,
