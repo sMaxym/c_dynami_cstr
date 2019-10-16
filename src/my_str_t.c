@@ -154,13 +154,49 @@ const char* my_str_get_cstr(my_str_t* str);
 //! Повертає 0, якщо успішно,
 //! -1 -- якщо передано нульовий вказівник,
 //! -2 -- помилка виділення додаткової пам'яті.
-int my_str_pushback(my_str_t* str, char c);
+int my_str_pushback(my_str_t* str, char c)
+{
+    int pointer;
+    if (!str)
+    {
+        return -1; 
+    }
+    if (str->size_m < str->capacity_m - 1)
+    {
+        *(str->data + str->size_m) = c;
+        str->size_m++;
+    }
+    else{
+        //pointer = my_str_reserve(str, str->size_m);
+        if (pointer < 0)
+        {
+            return -2;
+        }
+        *(str->data + str->size_m) = c;
+        str->size_m++;
+    }
+    return 0;
+}
 
 //! Викидає символ з кінця.
 //! Повертає його, якщо успішно,
 //! -1 -- якщо передано нульовий вказівник,
 //! -2 -- якщо стрічка порожня.
-int my_str_popback(my_str_t* str);
+int my_str_popback(my_str_t* str)
+{
+    int pointer = my_str_empty(str);
+    if (!str)
+    {
+        return -1;
+    }
+    if (pointer == 1)
+    {
+        return -2;
+    }
+    char c = *(str->data + str->size_m - 1);
+    *(str->data + str->size_m - 1) = '\0';
+    return c;
+}
 
 //! Копіює стрічку. Якщо reserve == true,
 //! то із тим же розміром буферу, що й вихідна,
@@ -174,12 +210,31 @@ int my_str_copy(const my_str_t* from,  my_str_t* to, int reserve);
 //! Уточнення (чомусь ця ф-ція викликала багато непорозумінь):
 //! стрічка продовжує існувати, буфер той самий, того ж розміру, що був,
 //! лише містить 0 символів -- єдине, що вона робить, це size_m = 0.
-void my_str_clear(my_str_t* str);
+void my_str_clear(my_str_t* str)
+{
+    str->size_m = 0;
+}
 
 //! Вставити символ у стрічку в заданій позиції, змістивши решту символів праворуч.
 //! За потреби -- збільшує буфер.
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_insert_c(my_str_t* str, char c, size_t pos);
+int my_str_insert_c(my_str_t* str, char c, size_t pos)
+{
+    if (str->size_m < str->capacity_m - 1)
+    {
+        for(size_t i = str->size_m - 1; i > pos, i = i - 1;)
+        {
+            *(str->data + i + 1) = *(str->data + i);
+        }
+        *(str->data + pos) = c;
+        str->size_m ++;
+    }
+    else
+    {
+        //
+    }
+    return 0;
+}
 
 //! Вставити стрічку в заданій позиції, змістивши решту символів праворуч.
 //! За потреби -- збільшує буфер.
