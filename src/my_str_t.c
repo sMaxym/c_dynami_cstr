@@ -93,7 +93,16 @@ size_t my_str_capacity(const my_str_t* str)
 }
 
 //! Повертає булеве значення, чи стрічка порожня:
-int my_str_empty(const my_str_t* str);
+int my_str_empty(const my_str_t* str)
+{
+    if (str->size_m == 0){
+        return 1;
+    }
+    else
+    {
+        return -1;
+    }
+}
 
 //!===========================================================================
 //! Доступ до символів стрічки
