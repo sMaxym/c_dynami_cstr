@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "my_str_t.h"
+#include "include/my_str_t.h"
 
 int main(int argc, char** argv)
 {

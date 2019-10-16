@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/dynamic_str.dir/main.c.o  -o dynamic_str -Wl,-rpath,/home/smaxym/Documents/courses/cop/c_dynamic_cstr/build libl.so 

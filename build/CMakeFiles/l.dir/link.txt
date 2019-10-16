@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC   -shared -Wl,-soname,libl.so -o libl.so CMakeFiles/l.dir/src/my_str_t.c.o 

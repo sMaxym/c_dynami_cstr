@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/smaxym/Documents/courses/cop/c_dynamic_cstr/src/my_str_t.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+

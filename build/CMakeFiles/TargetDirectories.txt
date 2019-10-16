@@ -1,0 +1,4 @@
+/home/smaxym/Documents/courses/cop/c_dynamic_cstr/build/CMakeFiles/rebuild_cache.dir
+/home/smaxym/Documents/courses/cop/c_dynamic_cstr/build/CMakeFiles/edit_cache.dir
+/home/smaxym/Documents/courses/cop/c_dynamic_cstr/build/CMakeFiles/l.dir
+/home/smaxym/Documents/courses/cop/c_dynamic_cstr/build/CMakeFiles/dynamic_str.dir

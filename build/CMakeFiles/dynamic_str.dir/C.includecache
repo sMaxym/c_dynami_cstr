@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/smaxym/Documents/courses/cop/c_dynamic_cstr/include/my_str_t.h
+stdlib.h
+-
+
+/home/smaxym/Documents/courses/cop/c_dynamic_cstr/main.c
+stdio.h
+-
+include/my_str_t.h
+/home/smaxym/Documents/courses/cop/c_dynamic_cstr/include/my_str_t.h
+

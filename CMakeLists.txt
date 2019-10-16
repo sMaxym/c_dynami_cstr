@@ -1,0 +1,5 @@
+cmake_minimum_required (VERSION 2.6)
+project (dynamic_str)
+add_library(l SHARED src/my_str_t.c include/my_str_t.h)
+add_executable(dynamic_str main.c)
+target_link_libraries(dynamic_str l)
