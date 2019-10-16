@@ -115,7 +115,15 @@ int my_str_getc(const my_str_t* str, size_t index)
 //! Записує символ у вказану позиції (заміняючи той, що там був),
 //! Повертає 0, якщо позиція в межах стрічки,
 //! Поветає -1, не змінюючи її вмісту, якщо ні.
-int my_str_putc(my_str_t* str, size_t index, char c);
+int my_str_putc(my_str_t* str, size_t index, char c)
+{
+    if (index >= str->size_m || index < 0)
+    {
+        return -1;
+    }
+    *(str->data + index) = c;
+    return 0;
+}
 
 //! Повернути вказівник на С-стрічку, еквівалентну str.
 //! Вважатимемо, що змінювати цю С-стрічку заборонено.
