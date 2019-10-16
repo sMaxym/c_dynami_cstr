@@ -67,7 +67,8 @@ void my_str_free(my_str_t* str)
 //! Повертає розмір стрічки.
 //! Для нульового вказівника -- 0.
 size_t my_str_size(const my_str_t* str){
-    if (!(str->size_m)){
+    if (!(str->size_m))
+    {
         return -1;
     }
     else
