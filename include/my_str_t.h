@@ -19,6 +19,7 @@ int my_str_empty(const my_str_t* str);
 
 int my_str_getc(const my_str_t* str, size_t index);
 int my_str_putc(my_str_t* str, size_t index, char c);
+const char* my_str_get_cstr(my_str_t* str);
 
 
 
