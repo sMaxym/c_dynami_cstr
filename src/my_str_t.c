@@ -199,7 +199,7 @@ int my_str_popback(my_str_t* str)
         return -2;
     }
     char c = *(str->data + str->size_m - 1);
-    *(str->data + str->size_m - 1) = '\0';
+    str->size_m--; 
     return c;
 }
 
