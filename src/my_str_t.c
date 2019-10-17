@@ -237,7 +237,7 @@ int my_str_insert_c(my_str_t* str, char c, size_t pos)
     }
     else
     {
-        pointer = my_str_reserve(&a, str->size_m * 2);
+        pointer = my_str_reserve(str, str->size_m * 2);
         if (pointer == -1)
         {
             return -1;
@@ -375,6 +375,10 @@ size_t my_str_find(const my_str_t* str, const my_str_t* tofind, size_t from)
     {
         return (size_t)(-1);
     }
+    if (str->size_m < tofind->size_m)
+    {
+        return (size_t)(-2);
+    }
     size_t endpoint = str->size_m - tofind->size_m;
     for (size_t i = from; i <= endpoint; i++)
     {
@@ -397,7 +401,29 @@ size_t my_str_find(const my_str_t* str, const my_str_t* tofind, size_t from)
 //! -1 (або інше від'ємне значення), якщо перша менша,
 //! 1 (або інше додатне значення) -- якщо друга.
 //! Поведінка має бути такою ж, як в strcmp.
-int my_str_cmp(const my_str_t* str1, const my_str_t* str2);
+int my_str_cmp(const my_str_t* str1, const my_str_t* str2)
+{
+    size_t len1 = str1->size_m, len2 = str2->size_m;
+    size_t shorter_len = len1 <= len2 ? len1 : len2;
+    for (size_t i = 0; i < shorter_len; i++)
+    {
+        char c1 = my_str_getc(str1, i), c2 = my_str_getc(str2, i);
+        if (c1 > c2)
+        {
+            return 1;
+        }
+        if (c1 < c2)
+        {
+            return -1;
+        }
+    }
+
+    if (len1 == len2)
+    {
+        return 0;
+    }
+    return len1 > len2 ? 1 : -1;
+}
 
 //! Порівняти стрічку із С-стрічкою, повернути 0, якщо рівні (за вмістом!)
 //! -1 (або інше від'ємне значення), якщо перша менша,
