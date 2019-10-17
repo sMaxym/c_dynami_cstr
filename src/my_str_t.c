@@ -573,7 +573,6 @@ int my_str_read_file(my_str_t* str, FILE* file)
     {
         my_str_clear(str);
     }
-    printf("%zu %zu\n", my_str_size(str), my_str_capacity(str));
     while (fgets(data_portion, PORTION_SIZE, file))
     {
         my_str_append_cstr(str, data_portion);
@@ -581,7 +580,22 @@ int my_str_read_file(my_str_t* str, FILE* file)
 }
 
 //! Аналог my_str_read_file, із stdin.
-int my_str_read(my_str_t* str);
+int my_str_read(my_str_t* str)
+{
+    // if (!str)
+    // {
+    //     return -1;
+    // }
+    // int const PORTION_SIZE = 1000;
+    // char data_portion[PORTION_SIZE];
+    // if (str->size_m)
+    // {
+    //     my_str_clear(str);
+    // }
+    // fgets(data_portion, PORTION_SIZE, stdin);
+    // my_str_append_cstr(str, data_portion);
+    my_str_read_file(str, stdin);
+}
 
 //! Записати стрічку в файл:
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.

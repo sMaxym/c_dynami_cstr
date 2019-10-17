@@ -45,6 +45,7 @@ size_t my_str_find_c(const my_str_t* str, char tofind, size_t from);
 size_t my_str_find_if(const my_str_t* str, int (*predicat)(int));
 
 int my_str_read_file(my_str_t* str, FILE* file);
+int my_str_read(my_str_t* str);
 
 #endif
 
