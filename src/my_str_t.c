@@ -469,7 +469,21 @@ int my_str_cmp_cstr(const my_str_t* str1, const char* cstr2)
 //! Знайти перший символ в стрічці, повернути його номер
 //! або (size_t)(-1), якщо не знайдено. from -- місце, з якого починати шукати.
 //! Якщо більше за розмір -- вважати, що не знайдено.
-size_t my_str_find_c(const my_str_t* str, char tofind, size_t from);
+size_t my_str_find_c(const my_str_t* str, char tofind, size_t from)
+{
+    if (from >= str->size_m)
+    {
+        return (size_t)(-1);
+    }
+    for (size_t i = from; i < str->size_m; ++i)
+    {
+        if (my_str_getc(str, i) == tofind)
+        {
+            return i;
+        }
+    }
+    return (size_t)(-1);
+}
 
 //! Знайти символ в стрічці, для якого передана
 //! функція повернула true, повернути його номер
@@ -496,7 +510,7 @@ int my_str_write_file(const my_str_t* str, FILE* file);
 
 //! Записати стрічку на консоль:
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_write(const my_str_t* str, FILE* file);
+int my_str_write(const my_str_t* str);
 
 //! На відміну від my_str_read_file(), яка читає до кінця файлу,
 //! читає по вказаний delimiter, за потреби
