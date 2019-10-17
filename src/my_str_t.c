@@ -308,7 +308,21 @@ int my_str_reserve(my_str_t* str, size_t buf_size)
 //! так, щоб capacity_m == size_t. Єдиний "офіційний"
 //! спосіб зменшити фактичний розмір буфера.
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_shrink_to_fit(my_str_t* str);
+int my_str_shrink_to_fit(my_str_t* str)
+{
+    size_t allocation_size = str->size_m * sizeof(char);
+    char* fitted_buf = (char*) malloc(allocation_size + 1);
+    if (!fitted_buf)
+    {
+        return -1;
+    }
+    memcpy(fitted_buf, str->data, str->size_m);
+    free(str->data);
+    str->data = fitted_buf;
+    str->capacity_m = str->size_m;
+    return 0;
+    
+}
 
 //! Якщо new_size менший за поточний розмір -- просто
 //! відкидає зайві символи (зменшуючи size_m). Якщо
