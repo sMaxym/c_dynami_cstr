@@ -172,7 +172,7 @@ int my_str_pushback(my_str_t* str, char c)
         str->size_m++;
     }
     else{
-        //pointer = my_str_reserve(str, str->size_m);
+        pointer = my_str_reserve(str,  2 *str->size_m);
         if (pointer < 0)
         {
             return -2;
