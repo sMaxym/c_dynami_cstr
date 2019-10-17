@@ -158,18 +158,44 @@ const char* my_str_get_cstr(my_str_t* str)
 //! викликом my_str_reserve().
 //! Розумним є буфер кожного разу збільшувати в 1.8-2 рази.
 //! ==========================================================================
-//static size_t my_str_putter(const char* cstr1, const char* cstr2, size_t pos)
-//{
-    //for(size_t i =my_str_len(cstr1); i>pos; i--)
-    //{
-    //    *(cstr1 + i + my_str_len(cstr2) -1) = *(cstr1 + i -1);
-    //}
-    //for(size_t j = 0; j < len(cstr2); j++)
-    //{
-     //   *(cstr1 + j + pos) = *(cstr2 + j);
-    //}
-    //return 0;
-//}
+static size_t my_str_putter(my_str_t* str, const char* cstr2, size_t pos)
+{
+    int pointer;
+    if (str->size_m + my_str_len(cstr2) >= str->capacity_m)
+    {
+        pointer = my_str_reserve(str, (str->size_m + my_str_len(cstr2)) * 2);
+        if (pointer == -1)
+        {
+            return -1;
+        }
+    }
+    for(size_t i = str->size_m; i>pos; i--)
+    {
+        *(str->data + i + my_str_len(cstr2) -1) = *(str->data +i -1);
+    }
+    for(size_t j = 0; j < my_str_len(cstr2); j++)
+    {
+       *(str->data + j + pos) = *(cstr2 + j);
+    }
+    return 0;
+}
+
+static size_t my_str_appender(my_str_t* str, const char* cstr)
+{
+    int pointer;
+    if (str->size_m + my_str_len(cstr) >= str->capacity_m)
+    {
+        pointer = my_str_reserve(str, (str->size_m + my_str_len(cstr)) * 2);
+        if (pointer == -1)
+        {
+            return -1;
+        }
+    }
+    for(size_t j =0; j<my_str_len(cstr); j++)
+    {
+       *(str->data + str->size_m + j) = *(cstr + j); 
+    }
+}
 //! Додає символ в кінець.
 //! Повертає 0, якщо успішно,
 //! -1 -- якщо передано нульовий вказівник,
@@ -283,16 +309,7 @@ int my_str_insert_c(my_str_t* str, char c, size_t pos)
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_insert(my_str_t* str, const my_str_t* from, size_t pos)
 {
-    int pointer;
-    if (str->size_m + from->size_m >= str->capacity_m)
-    {
-        pointer = my_str_reserve(str, (str->size_m + from->size_m) * 2);
-        if (pointer == -1)
-        {
-            return -1;
-        }
-    }
-    //my_str_putter(str->data, from->data, pos);
+    my_str_putter(str, from->data, pos);
     str->size_m += from->size_m;
     return 0;
 }
@@ -300,25 +317,18 @@ int my_str_insert(my_str_t* str, const my_str_t* from, size_t pos)
 //! Вставити C-стрічку в заданій позиції, змістивши решту символів праворуч.
 //! За потреби -- збільшує буфер.
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_insert_cstr(my_str_t* str, const char* from, size_t pos);
+int my_str_insert_cstr(my_str_t* str, const char* from, size_t pos)
+{
+    my_str_putter(str, from, pos);
+    str->size_m += my_str_len(from);
+    return 0;
+}
 
 //! Додати стрічку в кінець.
 //! За потреби -- збільшує буфер.
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_append(my_str_t* str, const my_str_t* from){
-    int pointer;
-    if (str->size_m + from->size_m >= str->capacity_m)
-    {
-        pointer = my_str_reserve(str, (str->size_m + from->size_m) * 2);
-        if (pointer == -1)
-        {
-            return -1;
-        }
-    }
-    for(size_t j =0; j<from->size_m; j++)
-    {
-       *(str->data + str->size_m + j) = *(from->data + j); 
-    }
+    my_str_appender(str, from->data);
     str->size_m += from->size_m;
     return 0;
 }
@@ -327,19 +337,7 @@ int my_str_append(my_str_t* str, const my_str_t* from){
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_append_cstr(my_str_t* str, const char* from)
 {
-    int pointer;
-    if (str->size_m + my_str_len(from) >= str->capacity_m)
-    {
-        pointer = my_str_reserve(str, (str->size_m + my_str_len(from)) * 2);
-        if (pointer == -1)
-        {
-            return -1;
-        }
-    }
-    for(size_t j =0; j<my_str_len(from); j++)
-    {
-       *(str->data + str->size_m + j) = from[j]; 
-    }
+    my_str_appender(str, from);
     str->size_m += my_str_len(from);
     return 0;
 }
@@ -349,7 +347,29 @@ int my_str_append_cstr(my_str_t* str, const char* from)
 //! символи до кінця. beg має бути в її межах -- якщо beg>size, це помилка.
 //! За потреби -- збільшує буфер.
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_substr(const my_str_t* from, my_str_t* to, size_t beg, size_t end);
+int my_str_substr(const my_str_t* from, my_str_t* to, size_t beg, size_t end)
+{
+    if (beg>end)
+    {
+        return -1;
+    }
+    int pointer;
+    my_str_t str_1;
+    my_str_create(&str1, end - beg);
+    if (end > str->size_m)
+    {
+        end = str->size_m + 1;        
+    }
+    for(size_t i = beg; i<end; i++)
+    {
+        pointer = my_str_pushback(&str_1, *(str->data + i));
+        if(pointer < 0)
+        {
+           return -2; 
+        }
+    }
+    return 0;
+}
 
 //! C-string варіант my_str_substr().
 //! Вважати, що в цільовій С-стрічці достатньо місц.
