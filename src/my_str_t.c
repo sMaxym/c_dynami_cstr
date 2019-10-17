@@ -158,7 +158,18 @@ const char* my_str_get_cstr(my_str_t* str)
 //! викликом my_str_reserve().
 //! Розумним є буфер кожного разу збільшувати в 1.8-2 рази.
 //! ==========================================================================
-
+//static size_t my_str_putter(const char* cstr1, const char* cstr2, size_t pos)
+//{
+    //for(size_t i =my_str_len(cstr1); i>pos; i--)
+    //{
+    //    *(cstr1 + i + my_str_len(cstr2) -1) = *(cstr1 + i -1);
+    //}
+    //for(size_t j = 0; j < len(cstr2); j++)
+    //{
+     //   *(cstr1 + j + pos) = *(cstr2 + j);
+    //}
+    //return 0;
+//}
 //! Додає символ в кінець.
 //! Повертає 0, якщо успішно,
 //! -1 -- якщо передано нульовий вказівник,
@@ -281,14 +292,7 @@ int my_str_insert(my_str_t* str, const my_str_t* from, size_t pos)
             return -1;
         }
     }
-    for(size_t i = str->size_m; i>pos; i--)
-    {
-        *(str->data + i + from->size_m -1) = *(str->data + i -1);
-    }
-    for(size_t j = 0; j < from->size_m; j++)
-    {
-        *(str->data + j + pos) = *(from->data + j);
-    }
+    //my_str_putter(str->data, from->data, pos);
     str->size_m += from->size_m;
     return 0;
 }
@@ -321,7 +325,24 @@ int my_str_append(my_str_t* str, const my_str_t* from){
 //! Додати С-стрічку в кінець.
 //! За потреби -- збільшує буфер.
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_append_cstr(my_str_t* str, const char* from);
+int my_str_append_cstr(my_str_t* str, const char* from)
+{
+    int pointer;
+    if (str->size_m + my_str_len(from) >= str->capacity_m)
+    {
+        pointer = my_str_reserve(str, (str->size_m + my_str_len(from)) * 2);
+        if (pointer == -1)
+        {
+            return -1;
+        }
+    }
+    for(size_t j =0; j<my_str_len(from); j++)
+    {
+       *(str->data + str->size_m + j) = from[j]; 
+    }
+    str->size_m += my_str_len(from);
+    return 0;
+}
 
 //! Скопіювати підстрічку, із beg включно, по end не включно ([beg, end)).
 //! Якщо end за межами початкової стрічки -- це не помилка, копіювати всі
