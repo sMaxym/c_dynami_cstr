@@ -24,7 +24,8 @@ static size_t my_str_len(const char* str)
 int my_str_create(my_str_t* str, size_t buf_size)
 {
     if (!str)
-    {
+    {    printf("%s\n", "cstr_size");
+
         return -1;
     }
     str->capacity_m = buf_size;
@@ -51,8 +52,11 @@ int my_str_from_cstr(my_str_t* str, const char* cstr, size_t buf_size)
     {
         return -1;
     }
+    if (my_str_create(str, buf_size))
+    {
+        return -1;
+    }
 
-    my_str_create(str, buf_size);
     memcpy(str->data, cstr, sizeof(char) * cstr_size);
     str->size_m = cstr_size;
     if (!str->data)
@@ -577,10 +581,41 @@ size_t my_str_find_if(const my_str_t* str, int (*predicat)(int))
 //! збільшуйте буфер.
 //! Рекомендую скористатися fgets().
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_read_file(my_str_t* str, FILE* file);
+int my_str_read_file(my_str_t* str, FILE* file)
+{
+    if (!file || !str)
+    {
+        return -1;
+    }
+    int const PORTION_SIZE = 1000;
+    char data_portion[PORTION_SIZE];
+    if (str->size_m)
+    {
+        my_str_clear(str);
+    }
+    while (fgets(data_portion, PORTION_SIZE, file))
+    {
+        my_str_append_cstr(str, data_portion);
+    }
+}
 
 //! Аналог my_str_read_file, із stdin.
-int my_str_read(my_str_t* str);
+int my_str_read(my_str_t* str)
+{
+    // if (!str)
+    // {
+    //     return -1;
+    // }
+    // int const PORTION_SIZE = 1000;
+    // char data_portion[PORTION_SIZE];
+    // if (str->size_m)
+    // {
+    //     my_str_clear(str);
+    // }
+    // fgets(data_portion, PORTION_SIZE, stdin);
+    // my_str_append_cstr(str, data_portion);
+    my_str_read_file(str, stdin);
+}
 
 //! Записати стрічку в файл:
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
