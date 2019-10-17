@@ -284,7 +284,25 @@ int my_str_substr_cstr(const my_str_t* from, char* to, size_t beg, size_t end);
 //! стрічки (size_m символів -- немає сенсу копіювати
 //! решту буфера) із старого буфера та звільняє його.
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_reserve(my_str_t* str, size_t buf_size);
+int my_str_reserve(my_str_t* str, size_t buf_size)
+{
+    if (str->capacity_m >= buf_size)
+    {
+        return 0;
+    }
+
+    size_t allocation_size = sizeof(char) * buf_size;
+    char* enlarged_buf = (char*) malloc(allocation_size + 1);
+    if (!enlarged_buf)
+    {
+        return -1;
+    }
+    memcpy(enlarged_buf, str->data, str->size_m);
+    free(str->data);
+    str->data = enlarged_buf;
+    str->capacity_m = buf_size;
+    return 0;
+}
 
 //! Робить буфер розміром, рівний необхідному:
 //! так, щоб capacity_m == size_t. Єдиний "офіційний"
