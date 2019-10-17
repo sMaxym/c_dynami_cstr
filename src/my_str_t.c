@@ -488,7 +488,19 @@ size_t my_str_find_c(const my_str_t* str, char tofind, size_t from)
 //! Знайти символ в стрічці, для якого передана
 //! функція повернула true, повернути його номер
 //! або (size_t)(-1), якщо не знайдено:
-size_t my_str_find_if(const my_str_t* str, int (*predicat)(int));
+size_t my_str_find_if(const my_str_t* str, int (*predicat)(int))
+{
+    int symb_code;
+    for (size_t i = 0; i < str->size_m; ++i)
+    {
+        symb_code = (int)my_str_getc(str, i);
+        if (predicat(symb_code))
+        {
+            return i;
+        }
+    }
+    return (size_t)(-1);
+}
 
 //!===========================================================================
 //! Ввід-вивід
