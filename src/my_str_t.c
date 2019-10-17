@@ -166,7 +166,7 @@ int my_str_pushback(my_str_t* str, char c)
     {
         return -1; 
     }
-    if (str->size_m < str->capacity_m - 1)
+    if (str->size_m < str->capacity_m)
     {
         *(str->data + str->size_m) = c;
         str->size_m++;
@@ -225,7 +225,8 @@ void my_str_clear(my_str_t* str)
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_insert_c(my_str_t* str, char c, size_t pos)
 {
-    if (str->size_m < str->capacity_m - 1)
+    int pointer;
+    if (str->size_m < str->capacity_m)
     {
         for(size_t i = str->size_m - 1; i > pos, i = i - 1;)
         {
@@ -236,7 +237,17 @@ int my_str_insert_c(my_str_t* str, char c, size_t pos)
     }
     else
     {
-        //
+        pointer = my_str_reserve(&a, str->size_m * 2);
+        if (pointer == -1)
+        {
+            return -1;
+        }
+        for(size_t i = str->size_m - 1; i > pos, i = i - 1;)
+        {
+            *(str->data + i + 1) = *(str->data + i);
+        }
+        *(str->data + pos) = c;
+        str->size_m ++;
     }
     return 0;
 }
