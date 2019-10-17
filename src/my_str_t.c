@@ -14,9 +14,19 @@ typedef struct
 //! Створення та знищення стрічки.
 //!===========================================================================
 
+static size_t my_str_len(const char* str)
+{
+    size_t index = 0;
+    while(str[index++] != '\0');
+    return index - 1;
+}
 
 int my_str_create(my_str_t* str, size_t buf_size)
 {
+    if (!str)
+    {
+        return -1;
+    }
     str->capacity_m = buf_size;
     str->size_m = 0;
     int allocation_size = sizeof(char*) * str->capacity_m + 1;
@@ -32,7 +42,7 @@ int my_str_create(my_str_t* str, size_t buf_size)
 // todo: remake normally
 int my_str_from_cstr(my_str_t* str, const char* cstr, size_t buf_size)
 {
-    size_t cstr_size = strlen(cstr);
+    size_t cstr_size = my_str_len(cstr);
     if (!buf_size)
     {
         buf_size = cstr_size;
@@ -43,7 +53,7 @@ int my_str_from_cstr(my_str_t* str, const char* cstr, size_t buf_size)
     }
 
     my_str_create(str, buf_size);
-    memcpy(str->data, cstr, cstr_size);
+    memcpy(str->data, cstr, sizeof(char) * cstr_size);
     str->size_m = cstr_size;
     if (!str->data)
     {
@@ -68,9 +78,9 @@ void my_str_free(my_str_t* str)
 //! Для нульового вказівника -- 0.
 size_t my_str_size(const my_str_t* str)
 {
-    if (!(str->size_m))
+    if (!str)
     {
-        return -1;
+        return 0;
     }
     else
     {
@@ -82,9 +92,9 @@ size_t my_str_size(const my_str_t* str)
 //! Для нульового вказівника -- 0.
 size_t my_str_capacity(const my_str_t* str)
 {
-    if (!(str->capacity_m))
+    if (!str)
     {
-        return -1;
+        return 0;
     }
     else
     {
@@ -95,13 +105,7 @@ size_t my_str_capacity(const my_str_t* str)
 //! Повертає булеве значення, чи стрічка порожня:
 int my_str_empty(const my_str_t* str)
 {
-    if (str->size_m == 0){
-        return 1;
-    }
-    else
-    {
-        return -1;
-    }
+    return my_str_size(str) == 0;
 }
 
 //!===========================================================================
@@ -113,7 +117,7 @@ int my_str_empty(const my_str_t* str)
 //! Тому, власне, int а не char
 int my_str_getc(const my_str_t* str, size_t index)
 {
-    if (index >= str->size_m || index < 0 || !str) 
+    if (!str || index >= str->size_m) 
     {
         return -1;
     }
@@ -209,7 +213,18 @@ int my_str_popback(my_str_t* str)
 //! (Старий вміст стрічки перед тим звільняє, за потреби).
 //! Повертає 0, якщо успішно, різні від'ємні числа для діагностики
 //! проблеми некоректних аргументів.
-int my_str_copy(const my_str_t* from,  my_str_t* to, int reserve);
+int my_str_copy(const my_str_t* from,  my_str_t* to, int reserve)
+{
+    if (!from || !to)
+    {
+        return -1;
+    }
+    size_t buffer_size = reserve ? from->capacity_m : from->size_m;
+    to->data = 0;
+    my_str_reserve(to, buffer_size);
+    memcpy(to->data, from->data, sizeof(char) * from->size_m);
+    return 0;
+}
 
 //! Очищає стрічку -- робить її порожньою. Складність має бути О(1).
 //! Уточнення (чомусь ця ф-ція викликала багато непорозумінь):
@@ -344,7 +359,7 @@ int my_str_reserve(my_str_t* str, size_t buf_size)
     {
         return -1;
     }
-    memcpy(enlarged_buf, str->data, str->size_m);
+    memcpy(enlarged_buf, str->data, sizeof(char) * str->size_m);
     free(str->data);
     str->data = enlarged_buf;
     str->capacity_m = buf_size;
@@ -363,7 +378,7 @@ int my_str_shrink_to_fit(my_str_t* str)
     {
         return -1;
     }
-    memcpy(fitted_buf, str->data, str->size_m);
+    memcpy(fitted_buf, str->data, sizeof(char) * str->size_m);
     free(str->data);
     str->data = fitted_buf;
     str->capacity_m = str->size_m;
@@ -402,6 +417,28 @@ int my_str_resize(my_str_t* str, size_t new_size, char sym)
 //! Функції пошуку та порівняння
 //!===========================================================================
 
+static size_t my_str_cmp_pointers(const char* cstr1, const char* cstr2, size_t len1, size_t len2)
+{
+    size_t shorter_len = len1 <= len2 ? len1 : len2;
+    for (size_t i = 0; i < shorter_len; i++)
+    {
+        char c1 = *(cstr1 + i), c2 = *(cstr2 + i);
+        if (c1 > c2)
+        {
+            return 1;
+        }
+        if (c1 < c2)
+        {
+            return -1;
+        }
+    }
+    if (len1 == len2)
+    {
+        return 0;
+    }
+    return len1 > len2 ? 1 : -1;
+}
+
 //! Знайти першу підстрічку в стрічці, повернути номер її
 //! початку або (size_t)(-1), якщо не знайдено. from -- місце, з якого починати шукати.
 //! Якщо більше за розмір -- вважати, що не знайдено.
@@ -433,6 +470,7 @@ size_t my_str_find(const my_str_t* str, const my_str_t* tofind, size_t from)
     return (size_t)(-1);
 }
 
+
 //! Порівняти стрічки, повернути 0, якщо рівні (за вмістом!)
 //! -1 (або інше від'ємне значення), якщо перша менша,
 //! 1 (або інше додатне значення) -- якщо друга.
@@ -440,42 +478,54 @@ size_t my_str_find(const my_str_t* str, const my_str_t* tofind, size_t from)
 int my_str_cmp(const my_str_t* str1, const my_str_t* str2)
 {
     size_t len1 = str1->size_m, len2 = str2->size_m;
-    size_t shorter_len = len1 <= len2 ? len1 : len2;
-    for (size_t i = 0; i < shorter_len; i++)
-    {
-        char c1 = my_str_getc(str1, i), c2 = my_str_getc(str2, i);
-        if (c1 > c2)
-        {
-            return 1;
-        }
-        if (c1 < c2)
-        {
-            return -1;
-        }
-    }
-
-    if (len1 == len2)
-    {
-        return 0;
-    }
-    return len1 > len2 ? 1 : -1;
+    return my_str_cmp_pointers(str1->data, str2->data, len1, len2);
 }
 
 //! Порівняти стрічку із С-стрічкою, повернути 0, якщо рівні (за вмістом!)
 //! -1 (або інше від'ємне значення), якщо перша менша,
 //! 1 (або інше додатне значення) -- якщо друга.
 //! Поведінка має бути такою ж, як в strcmp.
-int my_str_cmp_cstr(const my_str_t* str1, const char* cstr2);
+int my_str_cmp_cstr(const my_str_t* str1, const char* cstr2)
+{
+    size_t len1 = str1->size_m, len2 = my_str_len(cstr2);
+    return my_str_cmp_pointers(str1->data, cstr2, len1, len2);
+}
 
 //! Знайти перший символ в стрічці, повернути його номер
 //! або (size_t)(-1), якщо не знайдено. from -- місце, з якого починати шукати.
 //! Якщо більше за розмір -- вважати, що не знайдено.
-size_t my_str_find_c(const my_str_t* str, char tofind, size_t from);
+size_t my_str_find_c(const my_str_t* str, char tofind, size_t from)
+{
+    if (from >= str->size_m)
+    {
+        return (size_t)(-1);
+    }
+    for (size_t i = from; i < str->size_m; ++i)
+    {
+        if (my_str_getc(str, i) == tofind)
+        {
+            return i;
+        }
+    }
+    return (size_t)(-1);
+}
 
 //! Знайти символ в стрічці, для якого передана
 //! функція повернула true, повернути його номер
 //! або (size_t)(-1), якщо не знайдено:
-size_t my_str_find_if(const my_str_t* str, int (*predicat)(int));
+size_t my_str_find_if(const my_str_t* str, int (*predicat)(int))
+{
+    int symb_code;
+    for (size_t i = 0; i < str->size_m; ++i)
+    {
+        symb_code = (int)my_str_getc(str, i);
+        if (predicat(symb_code))
+        {
+            return i;
+        }
+    }
+    return (size_t)(-1);
+}
 
 //!===========================================================================
 //! Ввід-вивід
@@ -497,7 +547,7 @@ int my_str_write_file(const my_str_t* str, FILE* file);
 
 //! Записати стрічку на консоль:
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_write(const my_str_t* str, FILE* file);
+int my_str_write(const my_str_t* str);
 
 //! На відміну від my_str_read_file(), яка читає до кінця файлу,
 //! читає по вказаний delimiter, за потреби
