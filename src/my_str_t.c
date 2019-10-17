@@ -536,7 +536,20 @@ size_t my_str_find_if(const my_str_t* str, int (*predicat)(int))
 //! збільшуйте буфер.
 //! Рекомендую скористатися fgets().
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_read_file(my_str_t* str, FILE* file);
+int my_str_read_file(my_str_t* str, FILE* file)
+{
+    if (!file || !str)
+    {
+        return -1;
+    }
+    int const PORTION_SIZE = 1000;
+    char data_portion[PORTION_SIZE];
+    my_str_free(str);
+    while (fgets(data_portion, PORTION_SIZE, file))
+    {
+        
+    }
+}
 
 //! Аналог my_str_read_file, із stdin.
 int my_str_read(my_str_t* str);
