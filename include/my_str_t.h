@@ -24,6 +24,7 @@ int my_str_pushback(my_str_t* str, char c);
 int my_str_popback(my_str_t* str);
 void my_str_clear(my_str_t* str);
 int my_str_insert_c(my_str_t* str, char c, size_t pos);
+int my_str_insert(my_str_t* str, const my_str_t* from, size_t pos);
 
 int my_str_getc(const my_str_t* str, size_t index);
 int my_str_putc(my_str_t* str, size_t index, char c);
