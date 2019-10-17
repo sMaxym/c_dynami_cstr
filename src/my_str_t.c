@@ -547,7 +547,7 @@ int my_str_read_file(my_str_t* str, FILE* file)
     my_str_free(str);
     while (fgets(data_portion, PORTION_SIZE, file))
     {
-        
+        my_str_append_cstr(str, data_portion);
     }
 }
 
