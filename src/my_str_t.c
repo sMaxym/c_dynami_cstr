@@ -166,13 +166,13 @@ int my_str_pushback(my_str_t* str, char c)
     {
         return -1; 
     }
-    if (str->size_m < str->capacity_m - 1)
+    if (str->size_m < str->capacity_m)
     {
         *(str->data + str->size_m) = c;
         str->size_m++;
     }
     else{
-        pointer = my_str_reserve(str,  2 *str->size_m);
+        pointer = my_str_reserve(str,  2 * str->size_m);
         if (pointer < 0)
         {
             return -2;
@@ -338,13 +338,6 @@ int my_str_resize(my_str_t* str, size_t new_size, char sym)
     {
         str->size_m = new_size;
         return 0;
-    }
-    if (new_size > str->capacity_m)
-    {
-        if (my_str_reserve(str, str->capacity_m * 2))
-        {
-            return -1;
-        }
     }
     size_t diff = new_size - str->size_m;
     while (diff)
