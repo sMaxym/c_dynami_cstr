@@ -29,6 +29,7 @@ const char* my_str_get_cstr(my_str_t* str);
 
 int my_str_reserve(my_str_t* str, size_t buf_size);
 int my_str_shrink_to_fit(my_str_t* str);
+int my_str_resize(my_str_t* str, size_t new_size, char sym);
 
 
 #endif
