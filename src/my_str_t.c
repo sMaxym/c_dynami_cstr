@@ -332,7 +332,31 @@ int my_str_shrink_to_fit(my_str_t* str)
 //! Сподіваюся, різниця між розміром буфера та фактичним
 //! розміром стрічки зрозуміла?
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_resize(my_str_t* str, size_t new_size, char sym);
+int my_str_resize(my_str_t* str, size_t new_size, char sym)
+{
+    if (new_size <= str->size_m)
+    {
+        str->size_m = new_size;
+        return 0;
+    }
+    if (new_size > str->capacity_m)
+    {
+        if (my_str_reserve(str, str->capacity_m * 2))
+        {
+            return -1;
+        }
+    }
+    size_t diff = new_size - str->size_m;
+    while (diff)
+    {
+        if (my_str_pushback(str, sym))
+        {
+            return -1;
+        }
+        diff--;
+    }
+    return 0;
+}
 
 //!===========================================================================
 //! Функції пошуку та порівняння
