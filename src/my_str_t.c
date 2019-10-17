@@ -389,13 +389,61 @@ int my_str_resize(my_str_t* str, size_t new_size, char sym)
 //! Знайти першу підстрічку в стрічці, повернути номер її
 //! початку або (size_t)(-1), якщо не знайдено. from -- місце, з якого починати шукати.
 //! Якщо більше за розмір -- вважати, що не знайдено.
-size_t my_str_find(const my_str_t* str, const my_str_t* tofind, size_t from);
+size_t my_str_find(const my_str_t* str, const my_str_t* tofind, size_t from)
+{
+    if (from >= str->size_m)
+    {
+        return (size_t)(-1);
+    }
+    if (str->size_m < tofind->size_m)
+    {
+        return (size_t)(-2);
+    }
+    size_t endpoint = str->size_m - tofind->size_m;
+    for (size_t i = from; i <= endpoint; i++)
+    {
+        for (size_t j = 0; j < tofind->size_m; j++)
+        {
+            if (my_str_getc(str, i + j) != my_str_getc(tofind, j))
+            {
+                break;
+            }
+            if (j == tofind->size_m - 1)
+            {
+                return i;
+            }
+        }
+    }
+    return (size_t)(-1);
+}
 
 //! Порівняти стрічки, повернути 0, якщо рівні (за вмістом!)
 //! -1 (або інше від'ємне значення), якщо перша менша,
 //! 1 (або інше додатне значення) -- якщо друга.
 //! Поведінка має бути такою ж, як в strcmp.
-int my_str_cmp(const my_str_t* str1, const my_str_t* str2);
+int my_str_cmp(const my_str_t* str1, const my_str_t* str2)
+{
+    size_t len1 = str1->size_m, len2 = str2->size_m;
+    size_t shorter_len = len1 <= len2 ? len1 : len2;
+    for (size_t i = 0; i < shorter_len; i++)
+    {
+        char c1 = my_str_getc(str1, i), c2 = my_str_getc(str2, i);
+        if (c1 > c2)
+        {
+            return 1;
+        }
+        if (c1 < c2)
+        {
+            return -1;
+        }
+    }
+
+    if (len1 == len2)
+    {
+        return 0;
+    }
+    return len1 > len2 ? 1 : -1;
+}
 
 //! Порівняти стрічку із С-стрічкою, повернути 0, якщо рівні (за вмістом!)
 //! -1 (або інше від'ємне значення), якщо перша менша,
