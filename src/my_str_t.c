@@ -427,7 +427,7 @@ int my_str_substr_cstr(const my_str_t* from, char* to, size_t beg, size_t end)
         to[j] = (char)my_str_getc(from, i);
         j++;
     }
-    *(to + my_str_len(to)) = '\0';
+    *(to + j) = '\0';
     return 0;
 }
 
