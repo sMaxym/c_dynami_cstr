@@ -8,7 +8,7 @@ int reflect(my_str_t* str, my_str_t* reversed, size_t from, size_t to);
 int main(int argc, char** argv)
 {
     my_str_t data, reversed, buffer;
-    size_t index_from = 0, index_to;
+    int index_from = 0, index_to;
     
     my_str_create(&data, 10);
     my_str_create(&reversed, 10);
@@ -28,15 +28,17 @@ int main(int argc, char** argv)
     {
         reflect(&data, &buffer, index_from, index_to);
         my_str_append(&reversed, &buffer);
+        my_str_clear(&buffer);
         my_str_append_cstr(&reversed, " ");
         index_from = index_to + 1;
-                printf("%zu\n", index_from);
-
-        index_to = my_str_find_c(&data, ' ', index_from);
+        index_to = (int)my_str_find_c(&data, ' ', index_from);
     }
-
-    reflect(&data, &buffer, index_from, my_str_size(&data));
+    reflect(&data, &buffer, index_from, (int)my_str_size(&data));
     my_str_append(&reversed, &buffer);
+
+    fs = fopen(argv[2], "w");
+    my_str_write_file(&reversed, fs);
+    fclose(fs);
 
     return 0;
 }
