@@ -637,16 +637,25 @@ int my_str_read(my_str_t* str)
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_write_file(const my_str_t* str, FILE* file)
 {
-    // if (!file || !str)
-    // {
-    //     return -1;
-    // }
-    // int const PORTION_SIZE = 1000;
-    // char* buffer = my_str_get_cstr(str);
-    // size_t from = 0, to = from + PORTION_SIZE, size = str->size_m;
-    // while (from < size) {}
-    // my_str_substr_cstr(str, )
-
+    if (!file || !str)
+    {
+        return -1;
+    }
+    int const PORTION_SIZE = 1000;
+    char* buffer = (char*) malloc(sizeof(char) * PORTION_SIZE);
+    if (!buffer)
+    {
+        return -1;
+    }
+    size_t from = 0, to = from + PORTION_SIZE, size = str->size_m;
+    while (from < size) 
+    {
+        buffer = my_str_substr_cstr(str, buffer, from, to);
+        fput(buffer, file);
+        from = to;
+        to += PORTION_SIZE;
+    }
+    return 0;
 }
 
 //! Записати стрічку на консоль:
