@@ -293,7 +293,7 @@ int my_str_insert_c(my_str_t* str, char c, size_t pos)
     {
         return -1;
     }
-    if (pos >= str->size_m)
+    if (pos > str->size_m)
     {
         return -3; 
     }
@@ -306,10 +306,11 @@ int my_str_insert_c(my_str_t* str, char c, size_t pos)
         {
             return -2;
         }
-    for(size_t i = str->size_m - 1; i >= pos; i = i - 1)
+    for(size_t i = str->size_m; i > pos; i = i - 1)
         {
             *(str->data + i + 1) = *(str->data + i);
         }
+        *(str->data + pos + 1) = *(str->data + pos);
         *(str->data + pos) = c;
         str->size_m ++;
     return 0;
