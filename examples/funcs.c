@@ -7,6 +7,7 @@ void test_creation();
 int main(int argc, char** argv)
 {
     test_creation();
+    printf("\n");
 
     return 0;
 }
@@ -25,6 +26,6 @@ void test_creation()
             my_str_capacity(&str_b),
             my_str_size(&str_b),
             my_str_get_cstr(&str_b));
-    my_str_empty(&str_b);
+    my_str_free(&str_b);
     printf("String cleaned, so now capacity is %zu\n", my_str_capacity(&str_b));
 }
