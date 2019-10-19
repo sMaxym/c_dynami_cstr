@@ -646,23 +646,12 @@ int my_str_read_file(my_str_t* str, FILE* file)
     {
         my_str_append_cstr(str, data_portion);
     }
+    return 0;
 }
 
 //! Аналог my_str_read_file, із stdin.
 int my_str_read(my_str_t* str)
 {
-    // if (!str)
-    // {
-    //     return -1;
-    // }
-    // int const PORTION_SIZE = 1000;
-    // char data_portion[PORTION_SIZE];
-    // if (str->size_m)
-    // {
-    //     my_str_clear(str);
-    // }
-    // fgets(data_portion, PORTION_SIZE, stdin);
-    // my_str_append_cstr(str, data_portion);
     my_str_read_file(str, stdin);
 }
 
@@ -670,25 +659,56 @@ int my_str_read(my_str_t* str)
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_write_file(const my_str_t* str, FILE* file)
 {
-    // if (!file || !str)
-    // {
-    //     return -1;
-    // }
-    // int const PORTION_SIZE = 1000;
-    // char* buffer = my_str_get_cstr(str);
-    // size_t from = 0, to = from + PORTION_SIZE, size = str->size_m;
-    // while (from < size) {}
-    // my_str_substr_cstr(str, )
-
+    if (!file || !str)
+    {
+        return -1;
+    }
+    int const PORTION_SIZE = 1000;
+    char* buffer = (char*) malloc(sizeof(char) * PORTION_SIZE);
+    if (!buffer)
+    {
+        return -1;
+    }
+    size_t from = 0, to = from + PORTION_SIZE, size = str->size_m;
+    while (from < size) 
+    {
+        my_str_substr_cstr(str, buffer, from, to);
+        fputs(buffer, file);
+        from = to;
+        to += PORTION_SIZE;
+    }
+    return 0;
 }
 
 //! Записати стрічку на консоль:
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_write(const my_str_t* str);
+int my_str_write(const my_str_t* str)
+{
+    my_str_write_file(str, stdout);
+}
 
 //! На відміну від my_str_read_file(), яка читає до кінця файлу,
 //! читає по вказаний delimiter, за потреби
 //! збільшує стрічку.
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
-int my_str_read_file_delim(my_str_t* str, FILE* file, char delimiter);
-
+int my_str_read_file_delim(my_str_t* str, FILE* file, char delimiter)
+{
+    if (!file || !str)
+    {
+        return -1;
+    }
+    char data_portion[2];
+    if (str->size_m)
+    {
+        my_str_clear(str);
+    }
+    while (fgets(data_portion, 2, file))
+    {
+        my_str_append_cstr(str, data_portion);
+        if (data_portion[0] == delimiter)
+        {
+            return 0;
+        }
+    }
+    return 0;
+}

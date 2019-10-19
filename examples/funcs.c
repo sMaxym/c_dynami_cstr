@@ -3,10 +3,13 @@
 #include "./../include/my_str_t.h"
 
 void test_creation();
+void test_fields();
 
 int main(int argc, char** argv)
 {
     test_creation();
+    printf("\n");
+    test_fields();
     printf("\n");
 
     return 0;
@@ -28,4 +31,23 @@ void test_creation()
             my_str_get_cstr(&str_b));
     my_str_free(&str_b);
     printf("String cleaned, so now capacity is %zu\n", my_str_capacity(&str_b));
+}
+
+void test_fields()
+{
+    printf("%s\n", "\tFIELDS EXAMPLES");
+
+    my_str_t str_a;
+    my_str_from_cstr(&str_a, "Max and Ihor", 100);
+    printf("The properties of string 'str_a' are:\n\t-size: %zu\n\t-capacity: %zu\n",
+            my_str_size(&str_a),
+            my_str_capacity(&str_a));
+    if (my_str_empty(&str_a)) 
+    {
+        printf("%s\n", "String 'str_a' is empty");
+    }
+    else
+    {
+        printf("%s\n", "String 'str_a' is not empty");
+    }
 }
