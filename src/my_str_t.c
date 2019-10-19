@@ -358,15 +358,16 @@ int my_str_substr(const my_str_t* from, my_str_t* to, size_t beg, size_t end)
         return -1;
     }
     int pointer;
-    my_str_t str_1;
-    my_str_create(&str1, end - beg);
-    if (end > str->size_m)
+    if (end > from->size_m)
     {
-        end = str->size_m + 1;        
+        end = from->size_m;        
+    }
+    if (to->size_m + (end - beg) >= to->capacity_m){
+        my_str_reserve(to, (to->size_m) + (end - beg));
     }
     for(size_t i = beg; i<end; i++)
     {
-        pointer = my_str_pushback(&str_1, *(str->data + i));
+        pointer = my_str_pushback(to, *(from->data + i));
         if(pointer < 0)
         {
            return -2; 
@@ -377,7 +378,22 @@ int my_str_substr(const my_str_t* from, my_str_t* to, size_t beg, size_t end)
 
 //! C-string варіант my_str_substr().
 //! Вважати, що в цільовій С-стрічці достатньо місц.
-int my_str_substr_cstr(const my_str_t* from, char* to, size_t beg, size_t end);
+int my_str_substr_cstr(const my_str_t* from, char* to, size_t beg, size_t end)
+{
+    if (beg>end)
+    {
+        return -1;
+    }
+    if (end > from->size_m)
+    {
+        end = from->size_m;        
+    }
+    for(size_t i = beg; i<end; i++)
+    {
+        *(to + my_str_len(to)) = *(from->data + i);
+    }
+    return 0;
+}
 
 //!===========================================================================
 //! Маніпуляції розміром стрічки
