@@ -39,7 +39,9 @@ int main(int argc, char** argv)
     fs = fopen(argv[2], "w");
     my_str_write_file(&reversed, fs);
     fclose(fs);
-
+    my_str_free(&data);
+    my_str_free(&reversed);
+    my_str_free(&buffer);
     return 0;
 }
 

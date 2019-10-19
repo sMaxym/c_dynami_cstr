@@ -40,7 +40,6 @@ int my_str_create(my_str_t* str, size_t buf_size)
 }
 
 
-// todo: remake normally
 int my_str_from_cstr(my_str_t* str, const char* cstr, size_t buf_size)
 {
     size_t cstr_size = my_str_len(cstr);
@@ -52,7 +51,7 @@ int my_str_from_cstr(my_str_t* str, const char* cstr, size_t buf_size)
     {
         return -1;
     }
-    if (my_str_create(str, buf_size))
+    if (my_str_reserve(str, buf_size))
     {
         return -1;
     }
