@@ -373,6 +373,7 @@ int my_str_substr(const my_str_t* from, my_str_t* to, size_t beg, size_t end)
            return -2; 
         }
     }
+    to->size_m = (end-beg);
     return 0;
 }
 
@@ -392,6 +393,7 @@ int my_str_substr_cstr(const my_str_t* from, char* to, size_t beg, size_t end)
     {
         *(to + my_str_len(to)) = *(from->data + i);
     }
+    *(to + my_str_len(to)) = '\0';
     return 0;
 }
 
