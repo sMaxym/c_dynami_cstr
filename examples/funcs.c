@@ -4,12 +4,15 @@
 
 void test_creation();
 void test_fields();
+void test_access_to_chars();
 
 int main(int argc, char** argv)
 {
     test_creation();
     printf("\n");
     test_fields();
+    printf("\n");
+    test_access_to_chars();
     printf("\n");
 
     return 0;
@@ -50,4 +53,17 @@ void test_fields()
     {
         printf("%s\n", "String 'str_a' is not empty");
     }
+}
+
+void test_access_to_chars()
+{
+    printf("%s\n", "\tACCESS EXAMPLES");
+    int ch; 
+    my_str_t str_a;
+    my_str_from_cstr(&str_a, "Ihor is", 20);
+    printf("This function gets 4th char from string 'Ihor is'\n");
+    printf("It is %d or letter r\n", my_str_getc(&str_a, 3));
+    printf("This function will put some char to 4th position\n");
+    
+
 }

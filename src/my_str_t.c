@@ -164,13 +164,17 @@ const char* my_str_get_cstr(my_str_t* str)
 //! ==========================================================================
 static size_t my_str_putter(my_str_t* str, const char* cstr2, size_t pos)
 {
-    int pointer;
+    if (!str)
+    {
+        return -1; 
+    }
+    int flag;
     if (str->size_m + my_str_len(cstr2) >= str->capacity_m)
     {
-        pointer = my_str_reserve(str, (str->size_m + my_str_len(cstr2)) * 2);
-        if (pointer == -1)
+        flag = my_str_reserve(str, (str->size_m + my_str_len(cstr2)) * 2);
+        if (flag == -1)
         {
-            return -1;
+            return -2;
         }
     }
     for(size_t i = str->size_m; i>pos; i--)
@@ -186,13 +190,17 @@ static size_t my_str_putter(my_str_t* str, const char* cstr2, size_t pos)
 
 static size_t my_str_appender(my_str_t* str, const char* cstr)
 {
-    int pointer;
+    if (!str)
+    {
+        return -1; 
+    }
+    int flag;
     if (str->size_m + my_str_len(cstr) >= str->capacity_m)
     {
-        pointer = my_str_reserve(str, (str->size_m + my_str_len(cstr)) * 2);
-        if (pointer == -1)
+        flag = my_str_reserve(str, (str->size_m + my_str_len(cstr)) * 2);
+        if (flag == -1)
         {
-            return -1;
+            return -2;
         }
     }
     for(size_t j =0; j<my_str_len(cstr); j++)
@@ -206,7 +214,7 @@ static size_t my_str_appender(my_str_t* str, const char* cstr)
 //! -2 -- помилка виділення додаткової пам'яті.
 int my_str_pushback(my_str_t* str, char c)
 {
-    int pointer;
+    int flag;
     if (!str)
     {
         return -1; 
@@ -217,8 +225,8 @@ int my_str_pushback(my_str_t* str, char c)
         str->size_m++;
     }
     else{
-        pointer = my_str_reserve(str,  2 * str->size_m);
-        if (pointer < 0)
+        flag = my_str_reserve(str,  2 * str->size_m);
+        if (flag < 0)
         {
             return -2;
         }
@@ -234,12 +242,12 @@ int my_str_pushback(my_str_t* str, char c)
 //! -2 -- якщо стрічка порожня.
 int my_str_popback(my_str_t* str)
 {
-    int pointer = my_str_empty(str);
+    int flag = my_str_empty(str);
     if (!str)
     {
         return -1;
     }
-    if (pointer == 1)
+    if (flag == 1)
     {
         return -2;
     }
@@ -281,30 +289,30 @@ void my_str_clear(my_str_t* str)
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_insert_c(my_str_t* str, char c, size_t pos)
 {
-    int pointer;
-    if (str->size_m <= str->capacity_m)
+    if (!str)
     {
-        for(size_t i = str->size_m - 1; i >= pos; i = i - 1)
+        return -1;
+    }
+    if (pos > str->size_m)
+    {
+        return -3; 
+    }
+    int flag;
+    if (str->size_m >= str->capacity_m)
+    {
+        flag = my_str_reserve(str, str->size_m * 2);
+    }
+    if (flag == -1)
+        {
+            return -2;
+        }
+    for(size_t i = str->size_m; i > pos; i = i - 1)
         {
             *(str->data + i + 1) = *(str->data + i);
         }
+        *(str->data + pos + 1) = *(str->data + pos);
         *(str->data + pos) = c;
         str->size_m ++;
-    }
-    else
-    {
-        pointer = my_str_reserve(str, str->size_m * 2);
-        if (pointer == -1)
-        {
-            return -1;
-        }
-        for(size_t i = str->size_m - 1; i > pos; i = i - 1)
-        {
-            *(str->data + i + 1) = *(str->data + i);
-        }
-        *(str->data + pos) = c;
-        str->size_m ++;
-    }
     return 0;
 }
 
@@ -313,6 +321,10 @@ int my_str_insert_c(my_str_t* str, char c, size_t pos)
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_insert(my_str_t* str, const my_str_t* from, size_t pos)
 {
+    if (!str || !from)
+    {
+        return -1; 
+    }
     my_str_putter(str, from->data, pos);
     str->size_m += from->size_m;
     return 0;
@@ -323,6 +335,10 @@ int my_str_insert(my_str_t* str, const my_str_t* from, size_t pos)
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_insert_cstr(my_str_t* str, const char* from, size_t pos)
 {
+    if (!str)
+    {
+        return -1; 
+    }
     my_str_putter(str, from, pos);
     str->size_m += my_str_len(from);
     return 0;
@@ -332,6 +348,10 @@ int my_str_insert_cstr(my_str_t* str, const char* from, size_t pos)
 //! За потреби -- збільшує буфер.
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_append(my_str_t* str, const my_str_t* from){
+    if (!str || !from)
+    {
+        return -1; 
+    }
     my_str_appender(str, from->data);
     str->size_m += from->size_m;
     return 0;
@@ -341,6 +361,10 @@ int my_str_append(my_str_t* str, const my_str_t* from){
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_append_cstr(my_str_t* str, const char* from)
 {
+    if (!str || !from)
+    {
+        return -1; 
+    }
     my_str_appender(str, from);
     str->size_m += my_str_len(from);
     return 0;
@@ -353,11 +377,15 @@ int my_str_append_cstr(my_str_t* str, const char* from)
 //! У випадку помилки повертає різні від'ємні числа, якщо все ОК -- 0.
 int my_str_substr(const my_str_t* from, my_str_t* to, size_t beg, size_t end)
 {
+    if (!to || !from)
+    {
+        return -1; 
+    }
     if (beg>end)
     {
-        return -1;
+        return -2;
     }
-    int pointer;
+    int flag;
     if (end > from->size_m)
     {
         end = from->size_m;        
@@ -367,10 +395,10 @@ int my_str_substr(const my_str_t* from, my_str_t* to, size_t beg, size_t end)
     }
     for(size_t i = beg; i<end; i++)
     {
-        pointer = my_str_pushback(to, *(from->data + i));
-        if(pointer < 0)
+        flag = my_str_pushback(to, *(from->data + i));
+        if(flag < 0)
         {
-           return -2; 
+           return -3; 
         }
     }
     to->size_m = (end-beg);
@@ -381,9 +409,13 @@ int my_str_substr(const my_str_t* from, my_str_t* to, size_t beg, size_t end)
 //! Вважати, що в цільовій С-стрічці достатньо місц.
 int my_str_substr_cstr(const my_str_t* from, char* to, size_t beg, size_t end)
 {
+    if (!from)
+    {
+        return -1; 
+    }
     if (beg>end)
     {
-        return -1;
+        return -2;
     }
     if (end > from->size_m)
     {
