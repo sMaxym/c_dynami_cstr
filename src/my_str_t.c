@@ -652,8 +652,8 @@ int my_str_write_file(const my_str_t* str, FILE* file)
     size_t from = 0, to = from + PORTION_SIZE, size = str->size_m;
     while (from < size) 
     {
-        buffer = my_str_substr_cstr(str, buffer, from, to);
-        fput(buffer, file);
+        my_str_substr_cstr(str, buffer, from, to);
+        fputs(buffer, file);
         from = to;
         to += PORTION_SIZE;
     }
