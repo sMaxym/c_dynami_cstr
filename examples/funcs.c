@@ -5,6 +5,7 @@
 void test_creation();
 void test_fields();
 void test_access_to_chars();
+void test_string_modify();
 
 int main(int argc, char** argv)
 {
@@ -13,6 +14,8 @@ int main(int argc, char** argv)
     test_fields();
     printf("\n");
     test_access_to_chars();
+    printf("\n");
+    test_string_modify();
     printf("\n");
 
     return 0;
@@ -63,7 +66,30 @@ void test_access_to_chars()
     my_str_from_cstr(&str_a, "Ihor is", 20);
     printf("This function gets 4th char from string 'Ihor is'\n");
     printf("It is %d or letter r\n", my_str_getc(&str_a, 3));
-    printf("This function will put some char to 4th position\n");
-    
+    printf("This function will put  W to 4th position\n");
+    printf("Before: %s\n", my_str_get_cstr(&str_a));
+    my_str_putc(&str_a, 4, 'W');
+    printf("After: %s\n", my_str_get_cstr(&str_a));
+}
+
+void test_string_modify()
+{
+    printf("%s\n", "\tSTRING MODIFY");
+    my_str_t str_a , str_b;
+    my_str_create(&str_b, 4);
+    my_str_from_cstr(&str_a, "Ihor and Max", 20);
+    char ch = 'W';
+    printf("This function will put  W to the end of the string\n");
+    printf("Before: %s\n", my_str_get_cstr(&str_a));
+    my_str_pushback(&str_a, 'W');
+    printf("After: %s\n", my_str_get_cstr(&str_a));
+    printf("This function will remove W from the end of the string\n");
+    printf("Before: %s\n", my_str_get_cstr(&str_a));
+    my_str_popback(&str_a);
+    printf("After: %s\n", my_str_get_cstr(&str_a));
+    printf("This function will copy string to the another one\n");
+    printf("Before: %s\n", my_str_get_cstr(&str_b));
+    my_str_popback(&str_a);
+    printf("After: %s\n", my_str_get_cstr(&str_a));
 
 }

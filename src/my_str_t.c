@@ -295,7 +295,7 @@ int my_str_insert_c(my_str_t* str, char c, size_t pos)
     }
     if (pos > str->size_m)
     {
-        return -3; 
+        return -3;
     }
     int flag;
     if (str->size_m >= str->capacity_m)
@@ -421,9 +421,11 @@ int my_str_substr_cstr(const my_str_t* from, char* to, size_t beg, size_t end)
     {
         end = from->size_m;        
     }
+    int j = 0;
     for(size_t i = beg; i<end; i++)
     {
-        *(to + my_str_len(to)) = *(from->data + i);
+        to[j] = (char)my_str_getc(from, i);
+        j++;
     }
     *(to + my_str_len(to)) = '\0';
     return 0;
